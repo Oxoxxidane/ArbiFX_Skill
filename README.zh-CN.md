@@ -6,6 +6,14 @@
 
 CLI 支持实例发现与定位、工程检查、ExtendScript 执行、参考文件、OBJ/SVG 素材、文本、字体、标签、提示词、生成任务提交以及 AFX 保存与载入。提供 JSON 输出、离线预览和明确的错误码，不自动重试请求。
 
+## 让 AI 自动安装
+
+如果你的 AI 助手可以访问本机文件并执行命令，可以直接复制下面这段话发给它：
+
+```text
+请帮我安装 https://github.com/Oxoxxidane/ArbiFX_Skill 中的 ArbiFX Skill，将它放到当前 AI 工具的个人 Skill 目录，文件夹命名为 arbifx-http。请阅读 SKILL.md 和安装说明，根据我的操作系统和 CPU 选择仓库中已经编译好的 CLI，并安装 arbifx 命令，无需重新编译。如果已经安装，请在更新时保留本地修改。完成后运行 arbifx --version 和 arbifx --json doctor --offline 验证安装，并告诉我安装路径和使用方法。
+```
+
 ## 安装 Skill
 
 将本仓库克隆到 AI 工具的 Skill 目录下，并将文件夹命名为 `arbifx-http`。以 Codex 为例：

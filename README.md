@@ -6,6 +6,14 @@ An [Agent Skill](https://agentskills.io/specification) and standalone command-li
 
 The CLI includes instance discovery and resolution, project inspection, ExtendScript execution, reference files, OBJ/SVG assets, text, fonts, tags, prompts, generation submission, and AFX save/load. It provides JSON output, offline dry runs, explicit error codes, and no automatic request retries.
 
+## Ask your AI to install it
+
+If your AI assistant can access local files and run commands, copy and send this prompt:
+
+```text
+Please install the ArbiFX Skill from https://github.com/Oxoxxidane/ArbiFX_Skill into this AI tool's personal skills directory, using arbifx-http as the folder name. Read SKILL.md and the installation instructions, select the bundled CLI for my operating system and CPU, and install the arbifx command. Use the prebuilt executable; no compilation is needed. If the skill already exists, preserve local changes when updating it. Verify the installation with arbifx --version and arbifx --json doctor --offline, then tell me the installation path and how to use the skill.
+```
+
 ## Install the skill
 
 Clone this repository into a directory named `arbifx-http` inside your AI tool's skill location. For example, with Codex:

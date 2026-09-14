@@ -1,6 +1,8 @@
 # ArbiFX Skill
 
-An English [Agent Skill](https://agentskills.io/specification) and standalone command-line client for all **5 AE + 18 Start** local HTTP commands exposed by ArbiFX.
+[English](README.md) | [简体中文](README.zh-CN.md)
+
+An [Agent Skill](https://agentskills.io/specification) and standalone command-line client for all **5 AE + 18 Start** local HTTP commands exposed by ArbiFX.
 
 The CLI includes instance discovery and resolution, project inspection, ExtendScript execution, reference files, OBJ/SVG assets, text, fonts, tags, prompts, generation submission, and AFX save/load. It provides JSON output, offline dry runs, explicit error codes, and no automatic request retries.
 
@@ -64,7 +66,7 @@ go vet ./...
 go test -v ./...
 ```
 
-Build all six platforms and package the skill, using an output directory outside the checkout:
+From the repository root, build all six platforms and package the skill, using an output directory outside the checkout:
 
 ```sh
 go run ./scripts/release.go -root . -out ../arbifx-http-release
@@ -74,6 +76,7 @@ The builder runs source tests, compiles with `CGO_ENABLED=0`, and tests the nati
 
 ## Repository contents
 
+- `README.md` / `README.zh-CN.md`: English and Simplified Chinese guides.
 - `SKILL.md`: portable agent instructions and metadata.
 - `agents/openai.yaml`: optional Codex UI metadata.
 - `bin/`: six ready-to-run executables.

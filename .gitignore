@@ -1,0 +1,17 @@
+# Local credentials, build outputs, and editor files. Keep bin/ tracked.
+.env
+.env.*
+!.env.example
+config.toml
+*.log
+*.tmp
+*.test
+*.test.exe
+coverage.out
+/release/
+/dist/
+__pycache__/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

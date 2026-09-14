@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArbiFX HTTP Control"
+  short_description: "Control ArbiFX AE and Start with a standalone cross-platform CLI"
+  default_prompt: "Use $arbifx-http to locate the current ArbiFX instance, inspect Start, and perform the operation I specify."

@@ -2,6 +2,8 @@
 
 ## Running and installing
 
+**Before any live connection, load an ArbiFX (AFX) effect instance at least once in the current After Effects session.** Apply the effect to a layer or open a project containing it to initialize the plugin's HTTP listener. Opening AE alone is insufficient; the CLI cannot connect before this initialization. Repeat after restarting AE. Start commands also require an open Start window. Installation checks with `--version` and `doctor --offline` do not require AE, but they do not verify live connectivity.
+
 The distribution contains six standalone binaries: Windows/macOS/Linux on amd64/arm64. They require no third-party runtime dependencies. amd64 means Intel/AMD x64; darwin means macOS. Select the executable matching the target OS and CPU.
 
 On Windows, from the extracted skill directory:

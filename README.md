@@ -4,6 +4,8 @@
 
 An [Agent Skill](https://agentskills.io/specification) and standalone command-line client for all **5 AE + 18 Start** local HTTP commands exposed by ArbiFX.
 
+> **Before connecting:** Load an ArbiFX (AFX) effect instance at least once in the current After Effects session, for example by applying it to a layer or opening a project containing the effect. This initializes the plugin and starts its HTTP listener. **Opening AE alone is not enough; without loading an effect instance, the CLI cannot connect.** After restarting AE, load an instance again. Start commands additionally require the Start window to be open.
+
 The CLI includes instance discovery and resolution, project inspection, ExtendScript execution, reference files, OBJ/SVG assets, text, fonts, tags, prompts, generation submission, and AFX save/load. It provides JSON output, offline dry runs, explicit error codes, and no automatic request retries.
 
 ## Ask your AI to install it
@@ -11,7 +13,7 @@ The CLI includes instance discovery and resolution, project inspection, ExtendSc
 If your AI assistant can access local files and run commands, copy and send this prompt:
 
 ```text
-Please install the ArbiFX Skill from https://github.com/Oxoxxidane/ArbiFX_Skill into this AI tool's personal skills directory, using arbifx-http as the folder name. Read SKILL.md and the installation instructions, select the bundled CLI for my operating system and CPU, and install the arbifx command. Use the prebuilt executable; no compilation is needed. If the skill already exists, preserve local changes when updating it. Verify the installation with arbifx --version and arbifx --json doctor --offline, then tell me the installation path and how to use the skill.
+Please install the ArbiFX Skill from https://github.com/Oxoxxidane/ArbiFX_Skill into this AI tool's personal skills directory, using arbifx-http as the folder name. Read SKILL.md and the installation instructions, select the bundled CLI for my operating system and CPU, and install the arbifx command. Use the prebuilt executable; no compilation is needed. If the skill already exists, preserve local changes when updating it. Verify the installation with arbifx --version and arbifx --json doctor --offline, then tell me the installation path and how to use the skill. Remind me to load an ArbiFX (AFX) effect instance at least once in the current AE session before testing a live connection; otherwise its HTTP service is unavailable. Offline verification does not check AE connectivity.
 ```
 
 ## Install the skill
@@ -51,7 +53,7 @@ sh ./scripts/install.sh
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-After installation:
+After installation, load an ArbiFX (AFX) effect instance once in AE before running the live commands below. Open its Start window before using Start commands:
 
 ```sh
 arbifx --json doctor --target ae

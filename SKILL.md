@@ -30,7 +30,9 @@ arbifx --json commands
 
 Default ports are `28154` for AE and `28153` for Start. The CLI reads only the `[local_http]` port fields in the user's `.ArbiFX/config.toml`. Precedence is `--ae-port/--start-port` > `ARBIFX_AE_PORT/ARBIFX_START_PORT` > configuration > defaults. Use `--config` for another configuration file. Do not read or decrypt API keys to call these local endpoints.
 
-An AE connection failure may mean the ArbiFX effect module has not been initialized. Start's port does not exist while its window is closed. Do not repeatedly open windows or submit tasks to recover connectivity. Use `doctor --target ae` to narrow diagnostics. `doctor --offline` checks configuration only; it does not prove that a host is online.
+**Connection prerequisite:** The user must load an ArbiFX (AFX) effect instance at least once in the current AE session, by applying the effect to a layer or opening a project containing it. This initializes the plugin and starts its HTTP listener. Merely launching AE is insufficient: until an instance has been loaded, the CLI cannot connect. Repeat this initialization after restarting AE. When the service is unavailable, explain this prerequisite rather than trying to create the first instance through the unavailable HTTP endpoint.
+
+Start's port also requires its window to be open. Do not repeatedly open windows or submit tasks to recover connectivity. After an effect instance has been loaded, use `doctor --target ae` to check the AE connection. `doctor --offline` checks configuration only; it does not prove that a host is online.
 
 ## Identify the target before acting
 

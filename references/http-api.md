@@ -78,7 +78,7 @@ OBJ type is restricted to `obj`, `mtl`, `texture1`, `texture2`, `texture3`. The 
 
 ## Lifecycle and unavailable capabilities
 
-The AE listener exists only after ArbiFX AEX GlobalSetup. The Start listener exists only while its window process is alive. Port conflicts do not trigger automatic port changes. If multiple AE processes share the same configuration, only the first successful listener is available. A successful connection does not establish which AE process the user intends; inspect instances before operating.
+The AE listener exists only after ArbiFX AEX GlobalSetup. To initialize it, load an ArbiFX (AFX) effect instance at least once in the current AE session: apply the effect to a layer or open a project containing it. Launching AE alone does not make the endpoint available, so connections fail until an instance has been loaded. After restarting AE, load an instance again. The Start listener additionally requires its window process to be alive. Port conflicts do not trigger automatic port changes. If multiple AE processes share the same configuration, only the first successful listener is available. A successful connection does not establish which AE process the user intends; inspect instances before operating.
 
 Many Start writes fail while Start is busy; do not assume they can be queued or retried. `send` can also fail when no API key is configured, a pending task cannot be recovered, or the session cannot be written to AE. AE hot-reload work may still be queued after an HTTP response. The protocol has no dedicated Start status, font catalog, task polling/cancellation, window rebinding, complete parameter export, or arbitrary file download endpoint. The CLI does not invent these capabilities.
 

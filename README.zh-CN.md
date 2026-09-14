@@ -2,12 +2,6 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-用于控制 ArbiFX 的 [Agent Skill](https://agentskills.io/specification) 和独立命令行客户端，覆盖全部 **5 条 AE 端 + 18 条 Start 端**本机 HTTP 命令。
-
-> **连接前必须先做：**在当前 After Effects 会话中，至少加载一次 ArbiFX（AFX）效果实例，例如将该效果添加到图层，或打开包含该效果的工程。这一步会初始化插件并启动 HTTP 监听服务。**只打开 AE 不够；没有加载过效果实例，CLI 就连接不上。**重启 AE 后需要再次加载实例。使用 Start 端命令时，还需要打开 Start 窗口。
-
-CLI 支持实例发现与定位、工程检查、ExtendScript 执行、参考文件、OBJ/SVG 素材、文本、字体、标签、提示词、生成任务提交以及 AFX 保存与载入。提供 JSON 输出、离线预览和明确的错误码，不自动重试请求。
-
 ## 让 AI 自动安装
 
 如果你的 AI 助手可以访问本机文件并执行命令，可以直接复制下面这段话发给它：
@@ -15,6 +9,12 @@ CLI 支持实例发现与定位、工程检查、ExtendScript 执行、参考文
 ```text
 请帮我安装 https://github.com/Oxoxxidane/ArbiFX_Skill 中的 ArbiFX Skill，将它放到当前 AI 工具的个人 Skill 目录，文件夹命名为 arbifx-http。请阅读 SKILL.md 和安装说明，根据我的操作系统和 CPU 选择仓库中已经编译好的 CLI，并安装 arbifx 命令，无需重新编译。如果已经安装，请在更新时保留本地修改。完成后运行 arbifx --version 和 arbifx --json doctor --offline 验证安装，并告诉我安装路径和使用方法。请提醒我：测试实际连接前，必须在当前 AE 会话中至少加载一次 ArbiFX（AFX）效果实例，否则 HTTP 服务尚未启动，会连接不上。离线验证不检查 AE 是否能连接。
 ```
+
+## 简介
+
+让 AI 直接操作 ArbiFX，完成素材设置、提示词输入、任务发送和 AFX 保存载入，也能查询 AE 工程、执行脚本。附带独立 CLI，支持 AE 和 Start 的全部 23 个 HTTP 接口。
+
+使用前，先在 AE 的图层上添加一次 ArbiFX（AFX）效果，或打开包含该效果的工程，否则无法连接。重启 AE 后需要重新加载；操作 Start 时需打开 Start 窗口。
 
 ## 安装 Skill
 

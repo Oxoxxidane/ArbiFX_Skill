@@ -82,7 +82,7 @@ go test -v ./...
 go run ./scripts/release.go -root . -out ../arbifx-http-release
 ```
 
-构建器会执行源码测试，以 `CGO_ENABLED=0` 编译，并使用隔离的 HTTP 模拟服务验证当前构建平台的可执行文件。已完成的实机运行测试与交叉编译范围见 [验证记录](references/validation.md)。仓库中的可执行文件校验值见 [SHA256SUMS.txt](SHA256SUMS.txt)。
+构建器会执行源码测试，以 `CGO_ENABLED=0` 编译，并使用隔离的 HTTP 模拟服务验证当前构建平台的可执行文件。已完成的实机运行测试与交叉编译范围见 [验证记录](references/validation.md)。
 
 ## 仓库内容
 
@@ -93,6 +93,5 @@ go run ./scripts/release.go -root . -out ../arbifx-http-release
 - `cli/`：Go 源码和 HTTP 行为测试。
 - `scripts/`：启动器、安装脚本、构建入口和发布工具。
 - `references/`：协议、CLI、验证及 Go 运行库许可文档。
-- `SHA256SUMS.txt`：仓库中可执行文件的校验值。
 
 本仓库不包含 ArbiFX 宿主或插件源码、个人配置、登录凭据及场景文件。Go 运行库的再分发声明保留在 [references/LICENSE-Go.txt](references/LICENSE-Go.txt) 中。

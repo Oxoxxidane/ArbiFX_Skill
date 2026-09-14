@@ -82,7 +82,7 @@ From the repository root, build all six platforms and package the skill, using a
 go run ./scripts/release.go -root . -out ../arbifx-http-release
 ```
 
-The builder runs source tests, compiles with `CGO_ENABLED=0`, and tests the native executable against isolated HTTP fixtures. See [the validation record](references/validation.md) for the distinction between tested native execution and cross-compilation. The checked-in binaries are listed in [SHA256SUMS.txt](SHA256SUMS.txt).
+The builder runs source tests, compiles with `CGO_ENABLED=0`, and tests the native executable against isolated HTTP fixtures. See [the validation record](references/validation.md) for the distinction between tested native execution and cross-compilation.
 
 ## Repository contents
 
@@ -93,6 +93,5 @@ The builder runs source tests, compiles with `CGO_ENABLED=0`, and tests the nati
 - `cli/`: Go source and HTTP behavior tests.
 - `scripts/`: launchers, installers, build wrappers, and release tooling.
 - `references/`: protocol, CLI, validation, and Go runtime license documentation.
-- `SHA256SUMS.txt`: checksums for the checked-in executables.
 
 This repository does not contain the ArbiFX host/plugin source, personal configuration, credentials, or scene files. The Go runtime's redistribution notice is retained in [references/LICENSE-Go.txt](references/LICENSE-Go.txt).

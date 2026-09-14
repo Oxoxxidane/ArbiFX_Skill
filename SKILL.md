@@ -24,7 +24,7 @@ Check `arbifx --version`. If the command is not installed, select the bundled ex
 Resolve these paths relative to this `SKILL.md`; do not assume the current working directory is the skill directory. On macOS/Linux, `sh <skill-directory>/scripts/arbifx.sh ...` selects the executable automatically. Optional installers are `scripts/install.ps1` on Windows and `scripts/install.sh` on macOS/Linux. Running the bundled executable requires no Go, Python, Node, or third-party libraries.
 
 ```sh
-arbifx --json doctor
+arbifx --json doctor --target ae
 arbifx --json commands
 ```
 
@@ -32,12 +32,12 @@ Default ports are `28154` for AE and `28153` for Start. The CLI reads only the `
 
 **Connection prerequisite:** The user must load an ArbiFX (AFX) effect instance at least once in the current AE session, by applying the effect to a layer or opening a project containing it. This initializes the plugin and starts its HTTP listener. Merely launching AE is insufficient: until an instance has been loaded, the CLI cannot connect. Repeat this initialization after restarting AE. When the service is unavailable, explain this prerequisite rather than trying to create the first instance through the unavailable HTTP endpoint.
 
-Start's port also requires its window to be open. Do not repeatedly open windows or submit tasks to recover connectivity. After an effect instance has been loaded, use `doctor --target ae` to check the AE connection. `doctor --offline` checks configuration only; it does not prove that a host is online.
+After an effect instance has been loaded, use `doctor --target ae` to check the AE connection. A closed Start window is normal: when the user's task needs Start, locate the target instance and open it automatically with `ae open-start --id ID`. Do not ask the user to open Start manually. The AE endpoint opens the window even when Start's own port is not yet listening. For an inspection-only request, report its state without opening it. `doctor --offline` checks configuration only; it does not prove that a host is online.
 
 ## Identify the target before acting
 
 1. Run `arbifx --json ae instances`. When several instances exist, match the composition/layer requested by the user. Use `ae resolve --comp "Composition name" --layer "Layer name" --effect-index 0` when useful. It requires exactly one match; otherwise it returns an error and candidates rather than selecting the first instance.
-2. The current implementation replaces its ID table on every `instances` request, including the one inside `resolve`. Use the newly returned `data.id` or the instance array's `id` immediately with `ae open-start --id ID`. Do not query `instances` again between these steps or persist IDs for later use. Current indices are **zero-based**; use values returned by the service.
+2. When the requested task needs Start, call `ae open-start --id ID` for the selected instance as part of that task; no separate manual opening step is needed. The current implementation replaces its ID table on every `instances` request, including the one inside `resolve`. Use the newly returned `data.id` or the instance array's `id` immediately; do not query `instances` again between selection and opening or persist IDs for later use. Current indices are **zero-based**; use values returned by the service. After opening succeeds, check readiness with `doctor --target start` before issuing Start commands. If startup takes a moment, use bounded read-only readiness checks rather than repeatedly calling open-start.
 3. A Start window remains bound to one AE instance throughout its lifetime. `open-start` fails if another instance is already bound. Close the current window and open another instance only when switching targets is part of the user's task; do not automatically close a user's window after a failure.
 4. Read the relevant `get-*` state, then perform the specific modification already authorized by the user. Do not repeatedly request confirmation for the same task. Use `--dry-run` to inspect complex requests or file effects; it is entirely offline and does not validate whether the host will accept the request.
 5. Read back changes using the corresponding `get-*` command. Verify file creation after `save-afx`; `load-afx` applies a scene to the currently bound AE effect. Do not call `send` again while a generation task is still running.

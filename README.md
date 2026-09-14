@@ -14,7 +14,7 @@ Please install the ArbiFX Skill from https://github.com/Oxoxxidane/ArbiFX_Skill 
 
 Let your AI operate ArbiFX: set assets and prompts, submit tasks, save and load AFX files, inspect AE projects, and run scripts. The bundled standalone CLI supports all 23 AE and Start HTTP commands.
 
-Before connecting, apply an ArbiFX (AFX) effect to a layer in AE or open a project containing it. Without this step, the connection will fail. Load the effect again after restarting AE, and keep the Start window open when using Start commands.
+Before connecting, apply an ArbiFX (AFX) effect to a layer in AE or open a project containing it. Without this step, the connection will fail. Load the effect again after restarting AE.
 
 ## Install the skill
 
@@ -53,7 +53,7 @@ sh ./scripts/install.sh
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-After installation, load an ArbiFX (AFX) effect instance once in AE before running the live commands below. Open its Start window before using Start commands:
+After installation, load an ArbiFX (AFX) effect instance once in AE. When a task needs Start, the AI locates the instance and opens the window automatically. For manual CLI use, open it with `arbifx ae open-start --id <instance-id>`:
 
 ```sh
 arbifx --json doctor --target ae

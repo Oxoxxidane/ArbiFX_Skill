@@ -14,7 +14,7 @@
 
 让 AI 直接操作 ArbiFX，完成素材设置、提示词输入、任务发送和 AFX 保存载入，也能查询 AE 工程、执行脚本。附带独立 CLI，支持 AE 和 Start 的全部 23 个 HTTP 接口。
 
-使用前，先在 AE 的图层上添加一次 ArbiFX（AFX）效果，或打开包含该效果的工程，否则无法连接。重启 AE 后需要重新加载；操作 Start 时需打开 Start 窗口。
+使用前，先在 AE 的图层上添加一次 ArbiFX（AFX）效果，或打开包含该效果的工程，否则无法连接。重启 AE 后需要重新加载。
 
 ## 安装 Skill
 
@@ -53,7 +53,7 @@ sh ./scripts/install.sh
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-安装后，先在 AE 中加载一次 ArbiFX（AFX）效果实例，再执行下面的实际连接命令。使用 Start 命令前还需要打开对应的 Start 窗口：
+安装后，先在 AE 中加载一次 ArbiFX（AFX）效果实例。需要操作 Start 时，AI 会定位实例并自动打开窗口。手动使用 CLI 时，可用 `arbifx ae open-start --id <实例ID>` 打开：
 
 ```sh
 arbifx --json doctor --target ae

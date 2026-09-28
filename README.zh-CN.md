@@ -4,7 +4,11 @@
 
 ## 让 AI 自动安装
 
-请帮我安装 [https://github.com/Oxoxxidane/ArbiFX_Skill](https://github.com/Oxoxxidane/ArbiFX_Skill) 中的 ArbiFX Skill。
+如果你的 AI 助手可以访问本机文件并执行命令，可以直接复制下面这段话发给它：
+
+```text
+请帮我安装 https://github.com/Oxoxxidane/ArbiFX_Skill 中的 ArbiFX Skill。
+```
 
 ## 简介
 

@@ -4,7 +4,11 @@
 
 ## Ask your AI to install it
 
-Please install the ArbiFX Skill from [https://github.com/Oxoxxidane/ArbiFX_Skill](https://github.com/Oxoxxidane/ArbiFX_Skill).
+If your AI assistant can access local files and run commands, copy and send this prompt:
+
+```text
+Please install the ArbiFX Skill from https://github.com/Oxoxxidane/ArbiFX_Skill.
+```
 
 ## About
 

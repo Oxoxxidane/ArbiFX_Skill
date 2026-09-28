@@ -4,11 +4,7 @@
 
 ## Ask your AI to install it
 
-If your AI assistant can access local files and run commands, copy and send this prompt:
-
-```text
-Please install the ArbiFX Skill from https://github.com/Oxoxxidane/ArbiFX_Skill into this AI tool's personal skills directory, using arbifx-http as the folder name. Read SKILL.md and the installation instructions, select the bundled CLI for my operating system and CPU, and install the arbifx command. Use the prebuilt executable; no compilation is needed. If the skill already exists, preserve local changes when updating it. Verify the installation with arbifx --version and arbifx --json doctor --offline, then tell me the installation path and how to use the skill. Remind me to load an ArbiFX (AFX) effect instance at least once in the current AE session before testing a live connection; otherwise its HTTP service is unavailable. Offline verification does not check AE connectivity.
-```
+Please install the ArbiFX Skill from [https://github.com/Oxoxxidane/ArbiFX_Skill](https://github.com/Oxoxxidane/ArbiFX_Skill).
 
 ## About
 

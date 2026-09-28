@@ -43,7 +43,7 @@ arbifx ae project --json
 arbifx ae script --code-file inspect.jsx --dry-run --json
 ```
 
-`resolve` uses exact names and fails on zero or multiple matches. Replace example ID 27 with the actual ID just returned; do not use it after another instances query. The service provides no pagination: instances/project return complete collections. The CLI response limit is 64 MiB.
+`resolve` uses exact names and fails on zero or multiple matches. Replace example ID 27 with the actual ID just returned; do not use it after another instances query. Instance listing and the legacy project listing return complete collections. Targeted layer and keyframe queries support pagination through raw requests. The CLI response limit is 64 MiB.
 
 ```sh
 arbifx start set-reference --path reference.png --dry-run
@@ -62,7 +62,6 @@ arbifx start set-prompt --prompt-file prompt.txt --parameters-file parameters.tx
 arbifx start get-prompt
 arbifx start get-status
 arbifx start get-api-status
-arbifx start get-status
 arbifx start send --dry-run
 arbifx start save-afx --path scene.afx --dry-run
 arbifx start load-afx --path scene.afx --dry-run

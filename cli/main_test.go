@@ -73,8 +73,11 @@ func TestEveryProtocolCommandOverHTTP(t *testing.T) {
 		want        object
 	}{
 		{"ae", "status", nil, object{}}, {"ae", "instances", nil, object{}}, {"ae", "project", nil, object{}},
+		{"ae", "preview_frame", []string{"--path", filepath.Join(dir, "new-frame.png")}, object{"path": filepath.Join(dir, "new-frame.png")}},
 		{"ae", "open_start", []string{"--id", "opaque"}, object{"id": "opaque"}},
 		{"ae", "script", []string{"--code", "emit('你好'); return 42;"}, object{"code": "emit('你好'); return 42;"}},
+		{"start", "get_status", nil, object{}},
+		{"start", "get_api_status", nil, object{}},
 		{"start", "set_reference", []string{"--path", asset}, object{"path": asset}}, {"start", "get_reference", nil, object{}},
 		{"start", "set_obj", []string{"--slot", "7", "--type", "texture3", "--path", asset}, object{"slot": json.Number("7"), "type": "texture3", "path": asset}},
 		{"start", "get_obj", nil, object{}},
@@ -135,6 +138,8 @@ func TestBadInputsFailBeforeHTTP(t *testing.T) {
 		{"start", "set-text", "--text", "a", "--text-file", "-"},
 		{"start", "set-reference", "--path", "a", "--clear"},
 		{"ae", "status", "--path", "unexpected"},
+		{"start", "get-status", "--id", "unexpected"},
+		{"request", "start", "--body", `{"cmd":"get_status","job_id":"unexpected"}`},
 		{"request", "ae", "--body", `{"cmd":"status","typo":1}`},
 		{"request", "start", "--body", `{"cmd":"set_obj","slot":true,"type":"obj","path":""}`},
 		{"request", "ae", "--body", `{"cmd":"status"} {}`},
@@ -289,11 +294,80 @@ func TestConnectionFailure(t *testing.T) {
 }
 func TestCatalogAndHelp(t *testing.T) {
 	res, code := invoke(t, "", "commands", "--json")
-	if code != 0 || len(res["data"].([]any)) != 23 {
+	if code != 0 || len(res["data"].([]any)) != 26 {
 		t.Fatal(res)
 	}
 	if !strings.Contains(help(nil), "set-prompt") || !strings.Contains(help([]string{"start", "set-prompt"}), "--parameters") {
 		t.Fatal("help missing command fields")
+	}
+	if !strings.Contains(help([]string{"start", "get-status"}), "start get-status") {
+		t.Fatal("help missing status command")
+	}
+}
+
+func TestGetStatusPreservesSnapshots(t *testing.T) {
+	for _, fixture := range []string{
+		`{"ok":true,"data":{"busy":false,"status_text":"Idle","pending_job":null}}`,
+		`{"ok":true,"data":{"busy":true,"status_text":"Sending...","pending_job":{"job_id":null,"status":"preparing","phase":"creating","progress":0}}}`,
+		`{"ok":true,"data":{"busy":true,"status_text":"生成中","pending_job":{"job_id":"job_1","status":"running","phase":"generating","progress":45}}}`,
+		`{"ok":true,"data":{"busy":false,"status_text":"Task paused.","pending_job":{"job_id":"job_1","status":"running","phase":"generating","progress":45}}}`,
+		`{"ok":true,"data":{"busy":true,"status_text":"Preparing result...","pending_job":{"job_id":"job_1","status":"done","phase":"done","progress":100}}}`,
+		`{"ok":true,"data":{"busy":false,"status_text":"Applied.","pending_job":null}}`,
+		`{"ok":true,"data":{"busy":false,"status_text":"Task failed.","pending_job":null}}`,
+	} {
+		want, err := decode([]byte(fixture))
+		if err != nil {
+			t.Fatal(err)
+		}
+		count := atomic.Int32{}
+		port, closeServer := mock(t, func(w http.ResponseWriter, r *http.Request) {
+			count.Add(1)
+			b, _ := io.ReadAll(r.Body)
+			if string(b) != `{"cmd":"get_status"}` || r.Method != "POST" || r.URL.Path != "/command" {
+				t.Errorf("unexpected request: %s %s %s", r.Method, r.URL.Path, b)
+			}
+			fmt.Fprint(w, fixture)
+		})
+		for _, args := range [][]string{
+			{"start", "get-status"}, {"start", "get_status"},
+			{"request", "start", "--body", `{"cmd":"get_status"}`},
+		} {
+			got, code := invoke(t, "", append(args, "--start-port", port, "--json")...)
+			if code != 0 || !reflect.DeepEqual(got, want) {
+				t.Fatalf("%d %v want %v", code, got, want)
+			}
+		}
+		closeServer()
+		if count.Load() != 3 {
+			t.Fatalf("unexpected requests: %d", count.Load())
+		}
+	}
+}
+
+func TestGetStatusDryRunAndOlderHost(t *testing.T) {
+	count := atomic.Int32{}
+	port, closeServer := mock(t, func(w http.ResponseWriter, r *http.Request) {
+		count.Add(1)
+		fmt.Fprint(w, `{"ok":false,"error":"Unknown command."}`)
+	})
+	defer closeServer()
+	for _, args := range [][]string{
+		{"start", "get-status"},
+		{"request", "start", "--body", `{"cmd":"get_status"}`},
+	} {
+		res, code := invoke(t, "", append(args, "--start-port", port, "--dry-run", "--json")...)
+		if code != 0 || data(res)["mutating"] != false ||
+			!reflect.DeepEqual(data(res)["body"], object{"cmd": "get_status"}) || count.Load() != 0 {
+			t.Fatal(res, code, count.Load())
+		}
+	}
+	res, code := invoke(t, "", "start", "get-status", "--start-port", port, "--json")
+	if code != 4 || count.Load() != 1 || res["ok"] != false {
+		t.Fatal(res, code, count.Load())
+	}
+	details := res["error"].(map[string]any)["details"].(map[string]any)
+	if details["response"].(map[string]any)["error"] != "Unknown command." {
+		t.Fatal(res)
 	}
 }
 func TestStandaloneNoRuntimeOnPath(t *testing.T) {

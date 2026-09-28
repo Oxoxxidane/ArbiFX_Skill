@@ -12,7 +12,7 @@
 
 ## 简介
 
-让 AI 直接操作 ArbiFX，完成素材设置、提示词输入、任务发送和 AFX 保存载入，也能查询 AE 工程、执行脚本。附带独立 CLI，支持 AE 和 Start 的全部 23 个 HTTP 接口。
+让 AI 直接操作 ArbiFX，完成素材设置、提示词输入、任务发送与当前状态回读、AFX 保存载入，也能查询 AE 工程、执行脚本。附带独立 CLI，支持 AE 和 Start 的 26 个 HTTP 命令，包含 API 配置状态、详细工程查询与合成 PNG 导出。
 
 使用前，先在 AE 的图层上添加一次 ArbiFX（AFX）效果，或打开包含该效果的工程，否则无法连接。重启 AE 后需要重新加载。
 
@@ -59,10 +59,13 @@ export PATH="$HOME/.local/bin:$PATH"
 arbifx --json doctor --target ae
 arbifx --json ae instances
 arbifx --json start get-prompt
+arbifx --json start get-status
 arbifx --json start set-prompt --prompt-file prompt.txt --parameters-file parameters.txt --dry-run
 ```
 
 确定要执行操作时再去掉 `--dry-run`。两端均通过 `127.0.0.1` 上的 `POST /command` 接收命令：AE 默认端口为 `28154`，Start 默认端口为 `28153`。本机命令无需 token。CLI 只读取本机端口设置，不读取生成后端的登录凭据。
+
+`start get-status` 返回 `busy`、`status_text` 和 `pending_job`，忙碌期间也可查询。它是当前状态快照，不保留历史；`busy:false`、`pending_job:null` 均不能单独证明成功。旧版 Start 若返回未知命令，需要更新宿主。详细含义见 [状态回读说明](references/http-api.md#task-status-snapshot)。
 
 **宿主支持范围：**本次核对的 ArbiFX HTTP 服务端目前仅在 Windows 上实现。macOS/Linux 可执行文件提供跨平台客户端能力，并不包含 AE 插件或 Start 宿主的移植版。客户端也可使用经授权转发至 Windows 宿主的 localhost 端口。macOS 可执行文件尚未进行 Developer ID 签名或公证。
 

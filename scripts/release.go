@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"sort"
 	"strings"
@@ -115,6 +116,13 @@ func main() {
 	}
 	must(os.MkdirAll(absOut, 0755))
 	source := filepath.Join(absRoot, "cli")
+	protocol, e := os.ReadFile(filepath.Join(source, "protocol.go"))
+	must(e)
+	versionMatch := regexp.MustCompile(`(?m)^const version = "([0-9]+\.[0-9]+\.[0-9]+)"$`).FindSubmatch(protocol)
+	if versionMatch == nil {
+		must(fmt.Errorf("cannot read CLI version from protocol.go"))
+	}
+	releaseVersion := string(versionMatch[1])
 	goBin := filepath.Join(runtime.GOROOT(), "bin", "go")
 	if runtime.GOOS == "windows" {
 		goBin += ".exe"
@@ -148,7 +156,7 @@ func main() {
 	must(os.WriteFile(filepath.Join(absOut, "BINARY-SHA256SUMS.txt"), []byte(strings.Join(hashes, "\n")+"\n"), 0644))
 	archiveHashes := []string{}
 	for _, platform := range append(platforms, "all") {
-		name := "arbifx-http-1.0.0-" + platform + ".zip"
+		name := "arbifx-http-" + releaseVersion + "-" + platform + ".zip"
 		path := filepath.Join(absOut, name)
 		pack(absRoot, path, platform)
 		archiveHashes = append(archiveHashes, sum(path)+"  "+name)

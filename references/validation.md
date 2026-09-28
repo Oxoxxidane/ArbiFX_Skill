@@ -1,5 +1,28 @@
 # Distribution Validation Record
 
+## 1.3.0 — 2026-09-28
+
+- Aligned the command catalog to 6 AE and 20 Start commands. Added the read-only API configuration snapshot and retained existing task-status and AE inspection support.
+- Source `go vet` and the full `go test` suite passed. The Windows amd64 executable passed the same suite, including all 26 commands over HTTP, detailed query request/response preservation, invalid field rejection before connection, diagnostic failure inside an otherwise successful status response, PNG path preflight, API status states, old-host errors, dry-run without connections, and no automatic retries.
+- Tested the new Windows CLI against the installed Start executable using isolated profiles, synthetic keys, and a local verification server. Unconfigured, verification-in-progress, verified, rejected, and malformed-response states were read correctly. Repeated reads preserved configuration bytes/mtime, prompt and task state, and generated zero additional backend requests. No production key or generation task was used. All test Start processes were closed.
+- Live AE checks could not be completed in this run: both isolated startup attempts exited before the HTTP listener became available. No live AE query or PNG export success is claimed for this release. The prior 1.2.0 host evidence below remains historical, not a substitute for this run's verification.
+- All six standalone binaries were rebuilt; Windows amd64 was executed, and the other five targets were cross-compiled. The release filename version now comes from the CLI source rather than a separate hard-coded value. No ArbiFX host/plugin source or installation was changed.
+
+## 1.1.0 — 2026-09-27
+
+Toolchain: Go 1.27.1 windows/amd64, standard library only, CGO_ENABLED=0.
+
+- Compared `get_status` with the current Start implementation and host protocol document. The CLI sends a parameter-free read-only command and preserves the full server snapshot.
+- Source `go vet` and the full `go test` suite passed. The built Windows amd64 executable passed the same suite, covering all 24 supported commands and standalone execution without Go/Python/Node on PATH.
+- Added coverage for `get-status`, `get_status`, and the validated raw request form; null job IDs; Unicode status text; idle, preparing, running, paused, preparing-result, applied, and failed snapshots; dry-run without connections; unexpected-field rejection; and an older host's unknown-command error without retry or fallback.
+- The Windows amd64 CLI made 68 successful status requests against real Start processes with isolated profiles and local mock AE/backend services. All five cases passed: idle; creation paused without a job ID; running to backend failure; running to network pause; running to result-reading failure. Repeated reads preserved prompt/TXT and made no extra AE IPC calls. No real generation service or user AE project was used.
+- All six Windows/macOS/Linux amd64/ARM64 binaries were rebuilt. Windows amd64 was executed locally; the other five targets were cross-compiled, not run on native hardware. Cross-compilation does not establish native host integration on those platforms.
+- Verified PE/ELF/Mach-O architecture headers, binary and archive SHA-256 lists, and all seven ZIPs. Archive contents match the skill tree, platform packages contain the intended executables, Unix executable bits are preserved, and the installed Windows CLI matches its bundled binary. The command catalog is exactly the previous 23 commands plus `get_status`.
+- Skill frontmatter validation passed. Updated instructions document snapshot limitations and old-host behavior. Start `doctor` probing remains `get_tags` for compatibility.
+- This update changes the standalone CLI/skill distribution only; ArbiFX host source and installed plugin binaries are unchanged.
+
+## Previous validation — 2026-09-14
+
 Date: 2026-09-14. Toolchain: Go 1.27.1 windows/amd64. Standard library only, with CGO_ENABLED=0.
 
 - Source go vet and go test passed.
@@ -11,3 +34,9 @@ Date: 2026-09-14. Toolchain: Go 1.27.1 windows/amd64. Standard library only, wit
 - The project's HTTP listener currently has a Windows-only server implementation. Cross-platform client binaries do not change server platform support. The original ArbiFX3D project was not modified by this task.
 
 The English edition updates skill instructions, references, UI metadata, and CLI-authored messages. Unicode test fixtures intentionally retain non-English input to verify content preservation. Rebuilds rerun source and native-executable tests. Update statements about live AE/Start and other native platforms only after performing those checks.
+
+## 1.2.0 — 2026-09-28
+
+- Added AE preview_frame plus optional raw project/status query fields; existing named commands retain their arguments.
+- go test and go vet passed, including raw query validation, and the Windows amd64 executable passed the full interaction suite. All six binaries cross-compiled successfully; only Windows amd64 was executed.
+- Previous host integration evidence was recorded in the original ArbiFX3D workspace. CLI validation is distinct from AE renderer validation.

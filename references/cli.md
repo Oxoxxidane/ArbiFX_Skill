@@ -60,6 +60,9 @@ arbifx start set-tag --tag use_comp_camera --value true --dry-run
 arbifx start get-tags
 arbifx start set-prompt --prompt-file prompt.txt --parameters-file parameters.txt --dry-run
 arbifx start get-prompt
+arbifx start get-status
+arbifx start get-api-status
+arbifx start get-status
 arbifx start send --dry-run
 arbifx start save-afx --path scene.afx --dry-run
 arbifx start load-afx --path scene.afx --dry-run
@@ -125,7 +128,11 @@ Preview example:
 {"ok":true,"data":{"dry_run":true,"method":"POST","url":"http://127.0.0.1:28153/command","body":{"cmd":"set_svg","slot":0,"path":""},"mutating":true,"effects":["clear"]}}
 ```
 
-doctor reports the CLI version, platform, configuration sources, lack of authentication requirements, and target probe results. If a target fails, it still returns complete diagnostic data, with top-level `ok:false` and exit 3. Use `--target ae` to exclude a closed Start window from the check. The AE probe accepts both documented running and current online fields; the Start probe uses get_tags. There is no server-version endpoint; do not confuse CLI and host versions.
+doctor reports the CLI version, platform, configuration sources, lack of authentication requirements, and target probe results. If a target fails, it still returns complete diagnostic data, with top-level `ok:false` and exit 3. Use `--target ae` to exclude a closed Start window from the check. The AE probe accepts both documented running and current online fields; the Start probe keeps using get_tags for compatibility with older hosts. Updated AE hosts include plugin_version and capabilities in status; older hosts do not. Do not confuse CLI and host versions.
+
+`start get-status` (alias `start get_status`) is available in CLI 1.1.0 and requires a Start host that implements `get_status`. It takes no fields, returns the server's current snapshot unchanged, and is read-only even while Start is busy. An older host's unknown-command response exits 4. See [Task status snapshot](http-api.md#task-status-snapshot) for nullable fields and the limits of completion detection.
+
+`start get-api-status` (alias `start get_api_status`, CLI 1.3.0) takes no fields and returns `configured`, `verified`, and `verifying` unchanged. It reads cached state without sending backend requests or exposing credentials. False flags are valid data with exit 0, not a failed HTTP query. Old hosts return the normal API error, exit 4, without automatic fallback. See [API configuration snapshot](http-api.md#api-configuration-snapshot).
 
 | Exit code | Meaning |
 |---|---|
@@ -159,10 +166,12 @@ cd cli
 go test -v ./...
 ```
 
-Tests connect only to random-port HTTP fixtures. Coverage includes all 23 commands' method/path/body/UTF-8 lengths, dry-run with no connections, no proxies/redirects/retries, Unicode files and stdin, invalid fields, configuration precedence, secret exclusion, instance response compatibility and ambiguity, and API/script/timeout/connection failures. Setting `ARBIFX_TEST_EXE` also verifies independent execution from a temporary working directory with no Go/Python/Node on PATH.
+Tests connect only to random-port HTTP fixtures. Coverage includes all 26 supported commands' method/path/body/UTF-8 lengths, status snapshot preservation (including null IDs, paused tasks and terminal states), dry-run with no connections, no proxies/redirects/retries, Unicode files and stdin, invalid fields, configuration precedence, secret exclusion, instance response compatibility and ambiguity, and API/script/timeout/connection failures. Setting `ARBIFX_TEST_EXE` also verifies independent execution from a temporary working directory with no Go/Python/Node on PATH.
 
 The release directory contains six platform ZIPs, one all-platform ZIP, and binary/ZIP SHA-256 lists. Every archive has an `arbifx-http/` root with the skill, references, source, scripts, and the relevant executable(s). ZIP entries preserve executable permissions for Unix scripts and binaries; apply chmod if the extraction tool does not retain them.
 
 See the [Validation record](validation.md) for this release's actual test scope and native-host limitations.
 
-Source layout: `cli/main.go` handles arguments/workflows; `cli/protocol.go` defines commands and field validation; `cli/transport.go` handles HTTP/errors; `cli/config.go` reads ports; `cli/main_test.go` contains tests. `scripts/release.go` compiles and archives all platforms, with build.ps1/build.sh as wrappers. Installers copy already-built executables.
+Source layout: `cli/main.go` handles arguments/workflows; `cli/protocol.go` defines commands and field validation; `cli/transport.go` handles HTTP/errors; `cli/config.go` reads ports; `cli/main_test.go` and `cli/inspection_test.go` contain tests. `scripts/release.go` compiles and archives all platforms, with build.ps1/build.sh as wrappers. Installers copy already-built executables.
+
+CLI 1.2.0 adds `ae preview-frame --path ABSOLUTE.png` and raw optional fields for AE `project`/`status`. See the HTTP reference's AE inspection section. New host status includes a plugin version and capability flags; the CLI does not infer support solely from product version. Extended queries use a single UTF-8 JSON request file, preserving server path semantics.

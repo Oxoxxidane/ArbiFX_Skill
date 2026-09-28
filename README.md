@@ -12,7 +12,7 @@ Please install the ArbiFX Skill from https://github.com/Oxoxxidane/ArbiFX_Skill 
 
 ## About
 
-Let your AI operate ArbiFX: set assets and prompts, submit tasks, save and load AFX files, inspect AE projects, and run scripts. The bundled standalone CLI supports all 23 AE and Start HTTP commands.
+Let your AI operate ArbiFX: set assets and prompts, submit tasks and read their current status, save and load AFX files, inspect AE projects, and run scripts. The bundled standalone CLI supports 26 AE and Start HTTP commands, including API configuration status, detailed AE queries, and PNG preview export.
 
 Before connecting, apply an ArbiFX (AFX) effect to a layer in AE or open a project containing it. Without this step, the connection will fail. Load the effect again after restarting AE.
 
@@ -59,6 +59,7 @@ After installation, load an ArbiFX (AFX) effect instance once in AE. When a task
 arbifx --json doctor --target ae
 arbifx --json ae instances
 arbifx --json start get-prompt
+arbifx --json start get-status
 arbifx --json start set-prompt --prompt-file prompt.txt --parameters-file parameters.txt --dry-run
 ```
 

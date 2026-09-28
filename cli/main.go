@@ -75,7 +75,7 @@ func checkOptions(opts map[string]string, extra ...string) *cliError {
 }
 func help(words []string) string {
 	var b strings.Builder
-	b.WriteString("ArbiFX CLI " + version + " — All 23 AE/Start local HTTP commands\n")
+	fmt.Fprintf(&b, "ArbiFX CLI %s — %d AE/Start local HTTP commands\n", version, len(commands))
 	b.WriteString("Usage: arbifx [--json] <command> [options]\n\n")
 	b.WriteString("doctor [--target ae|start|both] [--offline]  Read-only diagnostics\ncommands [--target ae|start|both]  Command catalog\nae resolve --comp NAME [--layer NAME] [--comp-id N] [--layer-id N] [--layer-index N] [--effect-index N]\nrequest ae|start --body-file JSON  Raw POST /command (file - reads stdin)\n\n")
 	for _, c := range commands {
@@ -172,7 +172,7 @@ func buildBody(spec *command, opts map[string]string, stdin io.Reader) (object, 
 				return nil, input("value must be true or false.")
 			}
 			body[field] = value == "true"
-		case "asset", "save", "load":
+		case "asset", "save", "load", "png":
 			if value != "" {
 				var err error
 				value, err = filepath.Abs(value)
@@ -181,6 +181,17 @@ func buildBody(spec *command, opts map[string]string, stdin io.Reader) (object, 
 				}
 			}
 			body[field] = value
+			if kind == "png" {
+				if !strings.EqualFold(filepath.Ext(value), ".png") || strings.ContainsRune(value, '\x00') {
+					return nil, input("Preview output must have a .png extension and no null characters.")
+				}
+				if _, err := os.Lstat(value); err == nil || !os.IsNotExist(err) {
+					return nil, input("Preview output already exists or cannot be accessed.")
+				}
+				if info, err := os.Stat(filepath.Dir(value)); err != nil || !info.IsDir() {
+					return nil, input("The preview output parent directory must exist.")
+				}
+			}
 			if kind == "save" {
 				info, err := os.Stat(filepath.Dir(value))
 				if err != nil || !info.IsDir() {
@@ -321,7 +332,7 @@ func run(words []string, opts map[string]string, stdin io.Reader) (object, *cliE
 				checks[t] = object{"checked": true, "reachable": true, "response": res}
 			}
 		}
-		return object{"ok": healthy, "data": object{"cli_version": version, "platform": runtime.GOOS + "-" + runtime.GOARCH, "auth": "not_required", "config": cfg, "offline": offline, "targets": checks, "hint": "AE must have initialized ArbiFX, and Start must be open. The protocol provides no server-version or task-completion query."}}, nil
+		return object{"ok": healthy, "data": object{"cli_version": version, "platform": runtime.GOOS + "-" + runtime.GOARCH, "auth": "not_required", "config": cfg, "offline": offline, "targets": checks, "hint": "AE must have initialized ArbiFX, and Start must be open. Use start get-status for the current task snapshot; task history is unavailable. Updated AE status includes plugin_version and capabilities."}}, nil
 	}
 	if family == "ae" && len(words) == 2 && words[1] == "resolve" {
 		fields := []string{"comp", "layer", "comp-id", "layer-id", "layer-index", "effect-index"}
